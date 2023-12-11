@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+  <h1>Chat App</h1>
+  <ul id="chat-list"></ul>
+  <input type="text" id="username-input" placeholder="Your username">
+  <input type="text" id="message-input" placeholder="Type your message">
+  <button onclick="sendMessage()">Send</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    function sendMessage() {
+      const messageInput = document.getElementById('message-input');
+      const usernameInput = document.getElementById('username-input');
+      const message = messageInput.value.trim();
+      const username = usernameInput.value.trim(); // Get the username
+
+      if (message !== '' && username !== '') {
+        socket.emit('message', { username, message }); // Send both username and message
+        messageInput.value = '';
+      }
+    }
+
+    socket.on('message', (data) => {
+      const chatList = document.getElementById('chat-list');
+      const listItem = document.createElement('li');
+      listItem.textContent = `${data.username}: ${data.message}`; // Display username along with the message
+      chatList.appendChild(listItem);
+    });
+  </script>
+</body>
+</html>
